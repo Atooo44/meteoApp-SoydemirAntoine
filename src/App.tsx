@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import { fetchWeatherByCity } from './services/weatherService';
 
+// Définition d'une structure pour la météo
 interface Weather {
   id: number;
   city: string;
   country: string;
   temperature: number;
   description?: string;
-  weather_description?: string;
+  weather_description?: string; // Parfois l'API renvoie l'un ou l'autre
   humidity: number;
   windSpeed: number;
   date: string;
@@ -22,7 +23,7 @@ function App() {
   const [displayCity, setDisplayCity] = useState('Paris');
   const [darkMode, setDarkMode] = useState(false);
 
-  // Effet pour appliquer le mode sombre
+  // Effet pour le mode sombre - à modifier peut-être plus tard
   useEffect(() => {
     if (darkMode) {
       document.body.classList.add('dark-mode');
@@ -31,34 +32,35 @@ function App() {
     }
   }, [darkMode]);
 
-  // Fonction pour basculer le mode sombre
+  // Basculer entre les modes
   const toggleDarkMode = () => {
     setDarkMode(prevMode => !prevMode);
   };
 
-  // Séparer la modification du champ input de la recherche
+  // Pour la saisie dans le champ
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCity(e.target.value);
   };
 
+  // Fonction pour rechercher une ville
   const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault(); // Empêche le comportement par défaut du formulaire
+    e.preventDefault(); // stop le refresh de la page
     if (!city.trim()) return;
     
     setLoading(true);
     setError(null);
-    // Réinitialiser l'état weather pour forcer un nouveau rendu
+    // On remet à zéro pour le spinner
     setWeather(null);
     setDisplayCity(city);
     
-    // Petit délai pour assurer que les anciennes icônes ont disparu
+    // Petit délai pour l'animation
     setTimeout(async () => {
       try {
         const data = await fetchWeatherByCity(city);
-        console.log('Weather data:', data);
+        console.log('Données météo récupérées:', data);
         setWeather(data);
       } catch (err) {
-        setError('Impossible de récupérer les données météo. Veuillez réessayer.');
+        setError('Impossible de trouver cette ville. Essayez une autre orthographe?');
         console.error(err);
       } finally {
         setLoading(false);
@@ -66,7 +68,7 @@ function App() {
     }, 100);
   };
 
-  // Recherche initiale au chargement de la page
+  // Chargement initial - première fois
   useEffect(() => {
     const fetchInitialData = async () => {
       setLoading(true);
@@ -74,7 +76,7 @@ function App() {
       
       try {
         const data = await fetchWeatherByCity(displayCity);
-        console.log('Initial weather data:', data);
+        console.log('Données initiales:', data);
         setWeather(data);
       } catch (err) {
         setError('Impossible de récupérer les données météo. Veuillez réessayer.');
@@ -85,9 +87,9 @@ function App() {
     };
     
     fetchInitialData();
-  }, []);
+  }, []); // Pas de dépendance, juste au premier chargement
 
-  // Effet pour afficher les données météo pour le débogage
+  // Pour débogage - à supprimer plus tard peut-être
   useEffect(() => {
     if (weather) {
       console.log('Weather object:', weather);
@@ -96,18 +98,19 @@ function App() {
     }
   }, [weather]);
 
+  // Choix de l'icône en fonction du temps
   const getWeatherIcon = (description: string) => {
     if (!description) return null;
     
-    // Forcer la description en minuscules pour la comparaison
+    // Tout en minuscule pour comparer
     const lowerDesc = description.toLowerCase();
     
-    // Vérification explicite pour "rain showers"
+    // Cas spécial pour la pluie
     if (lowerDesc === "rain showers" || lowerDesc === "rain shower") {
       return getRainIcon();
     }
     
-    // Vérifier explicitement si la description contient "rain" ou "shower"
+    // Vérifier si on parle de pluie
     const containsRain = lowerDesc.includes('rain');
     const containsShower = lowerDesc.includes('shower');
     const containsPluie = lowerDesc.includes('pluie');
@@ -115,8 +118,7 @@ function App() {
     const containsAverse = lowerDesc.includes('averse');
     const containsDrizzle = lowerDesc.includes('drizzle');
     
-    // Conditions de pluie (français et anglais)
-    // Test pour la pluie
+    // Tous les cas de pluie possibles
     const isRain = containsRain || 
                   containsShower || 
                   containsPluie || 
@@ -124,12 +126,12 @@ function App() {
                   containsDrizzle || 
                   containsAverse;
     
-    // Les conditions de pluie ont priorité
+    // Parce que s'il pleut, c'est plus important
     if (isRain) {
       return getRainIcon();
     }
 
-    // Test pour les nuages
+    // Pour les nuages
     const isCloudy = lowerDesc.includes('nuage') || 
                     lowerDesc.includes('nuageux') || 
                     lowerDesc.includes('couvert') || 
@@ -138,14 +140,14 @@ function App() {
                     lowerDesc.includes('overcast');
     
     if (isCloudy) {
-      return getCloudIcon();
+      return getCloudIcon(); // affiche nuage
     }
 
-    // Par défaut, soleil
+    // Par défaut c'est du soleil
     return getSunIcon();
   };
 
-  // Fonction pour l'icône de pluie
+  // Pour afficher la pluie
   const getRainIcon = () => {
     return (
       <div className="weather-icon emoji-icon" key="rain-icon">
@@ -154,7 +156,7 @@ function App() {
     );
   };
 
-  // Fonction pour l'icône de nuage
+  // Pour les nuages
   const getCloudIcon = () => {
     return (
       <div className="weather-icon emoji-icon" key="cloud-icon">
@@ -163,7 +165,7 @@ function App() {
     );
   };
 
-  // Fonction pour l'icône de soleil
+  // Icône soleil
   const getSunIcon = () => {
     return (
       <div className="weather-icon emoji-icon" key="sun-icon">
@@ -172,13 +174,14 @@ function App() {
     );
   };
 
+  // Cette fonction donne des conseils vestimentaires selon la météo
   const getWeatherAdvice = (description: string, temperature: number) => {
-    // Vérifier si description existe
+    // check si on a une description
     if (!description) return 'Bonne journée!';
     
     const lowercaseDesc = description.toLowerCase();
     
-    // Condition pluie (français et anglais)
+    // S'il pleut
     const isRain = lowercaseDesc.includes('pluie') || 
                   lowercaseDesc.includes('pluvieux') || 
                   lowercaseDesc.includes('averse') || 
@@ -191,7 +194,7 @@ function App() {
       return 'Prenez votre parapluie';
     }
     
-    // Conditions ensoleillées (français et anglais)
+    // S'il fait beau
     if (lowercaseDesc.includes('soleil') || lowercaseDesc.includes('ensoleillé') || 
         lowercaseDesc.includes('clair') || lowercaseDesc.includes('dégagé') ||
         lowercaseDesc.includes('sun') || lowercaseDesc.includes('sunny') || 
@@ -203,13 +206,13 @@ function App() {
       }
     }
     
-    // Conditions neigeuses (français et anglais)
+    // S'il neige
     if (lowercaseDesc.includes('neige') || lowercaseDesc.includes('neigeux') ||
         lowercaseDesc.includes('snow') || lowercaseDesc.includes('snowy')) {
       return 'Habillez-vous chaudement';
     }
     
-    // Conditions venteuses (français et anglais)
+    // S'il y a du vent
     if (lowercaseDesc.includes('vent') || lowercaseDesc.includes('venteux') || 
         lowercaseDesc.includes('tempête') || lowercaseDesc.includes('rafale') ||
         lowercaseDesc.includes('wind') || lowercaseDesc.includes('windy') || 
@@ -217,9 +220,9 @@ function App() {
       return 'Attention au vent fort';
     }
     
-    // Conseils basés sur la température
+    // Selon la température - j'ai ajouté mes préférences personnelles ici
     if (temperature < 5) {
-      return 'Portez un manteau très chaud';
+      return 'Portez un manteau très chaud'; // trop froid pour moi
     }
     
     if (temperature < 10) {
@@ -227,14 +230,14 @@ function App() {
     }
     
     if (temperature > 30) {
-      return 'Restez hydraté et à l\'ombre';
+      return 'Restez hydraté et à l\'ombre'; // je déteste la chaleur
     }
     
     if (temperature > 28) {
       return 'Gardez-vous bien hydraté';
     }
     
-    // Conseils par défaut pour d'autres conditions (français et anglais)
+    // Autres conditions
     if (lowercaseDesc.includes('nuage') || lowercaseDesc.includes('nuageux') || 
         lowercaseDesc.includes('couvert') || lowercaseDesc.includes('cloud') || 
         lowercaseDesc.includes('cloudy') || lowercaseDesc.includes('overcast')) {
@@ -246,18 +249,18 @@ function App() {
       return 'Conduisez prudemment';
     }
     
-    // Conseil par défaut si aucune condition spécifique n'est détectée
+    // Conseil par défaut
     return 'Habillez-vous selon la température';
   };
 
-  // Icône pour le conseil vestimentaire
+  // Icône pour le conseil (à revoir, pas très jolie)
   const getAdviceIcon = (description: string, temperature: number) => {
-    // Vérifier si description existe
+    // vérifier si on a une description
     if (!description) return null;
     
     const lowercaseDesc = description.toLowerCase();
     
-    // Icônes pour la pluie (français et anglais)
+    // Pour la pluie
     const isRain = lowercaseDesc.includes('pluie') || 
                   lowercaseDesc.includes('pluvieux') || 
                   lowercaseDesc.includes('averse') || 
@@ -277,7 +280,7 @@ function App() {
       );
     }
     
-    // Conditions ensoleillées
+    // Pour le soleil
     const isSunny = lowercaseDesc.includes('soleil') || 
                    lowercaseDesc.includes('ensoleillé') || 
                    lowercaseDesc.includes('clair') || 
@@ -286,7 +289,7 @@ function App() {
                    lowercaseDesc.includes('sunny') || 
                    lowercaseDesc.includes('clear');
     
-    const isHot = temperature > 25;
+    const isHot = temperature > 25; // pour moi c'est chaud
     
     if (isSunny || isHot) {
       return (
@@ -299,7 +302,7 @@ function App() {
       );
     }
     
-    // Icône par défaut (habillement)
+    // Par défaut (vêtements)
     return (
       <svg className="advice-icon" viewBox="0 0 24 24" width="16" height="16" key="default-advice-icon">
         <path
@@ -315,7 +318,7 @@ function App() {
       <button 
         className="dark-mode-toggle" 
         onClick={toggleDarkMode}
-        aria-label={darkMode ? "Activer le mode clair" : "Activer le mode sombre"}
+        aria-label={darkMode ? "Mode jour" : "Mode nuit"}
       >
         {darkMode ? '☀️' : '🌙'}
       </button>
@@ -335,7 +338,7 @@ function App() {
 
       {error && <div className="error-message">{error}</div>}
       
-      {loading && <div>Chargement...</div>}
+      {loading && <div>Chargement en cours...</div>}
 
       {weather && !loading && !error && (
         <div className="weather-card">
@@ -350,9 +353,9 @@ function App() {
               <div className="temp-value">{Math.round(weather.temperature)}°C</div>
               <div className="description">{weather.weather_description || weather.description}</div>
               
-              {/* Affichage du conseil vestimentaire - simplifié pour garantir l'affichage */}
+              {/* Le conseil vestimentaire */}
               <div className="weather-advice" key={`advice-${displayCity}`}>
-                {/* Forcer l'icône de conseil pour la pluie si "Rain showers" */}
+                {/* J'ai eu un bug avec "Rain showers" alors je force l'icône */}
                 {(weather.weather_description === "Rain showers" || weather.weather_description === "Rainy") ? (
                   <>
                     <svg className="advice-icon" viewBox="0 0 24 24" width="16" height="16" key="rain-advice-icon">
@@ -372,7 +375,7 @@ function App() {
               </div>
             </div>
             <div className="icon-container" key={`icon-${displayCity}`}>
-              {/* Forcer l'icône de pluie pour "Rain showers" */}
+              {/* Fix pour les "Rain showers" */}
               {(weather.weather_description === "Rain showers" || weather.weather_description === "Rainy") ? 
                 getRainIcon() : 
                 getWeatherIcon(weather.weather_description || weather.description || '')}
