@@ -1,6 +1,11 @@
 import axios from 'axios';
 
-const API_URL = '/api/v1/weathers';
+// Use direct API URL for production and a relative URL for development
+const isDevelopment = import.meta.env.DEV;
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://freetestapi.com';
+const API_URL = isDevelopment 
+  ? '/api/v1/weathers' 
+  : `${API_BASE_URL}/api/v1/weathers`;
 
 export const fetchWeatherByCity = async (city: string) => {
   try {
