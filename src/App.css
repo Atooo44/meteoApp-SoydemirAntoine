@@ -1,0 +1,186 @@
+.app-container {
+  max-width: 400px;
+  background-color: var(--card-background);
+  padding: 25px;
+  border-radius: var(--border-radius);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+  transition: background-color 0.3s ease;
+}
+
+.search-wrapper {
+  position: relative;
+  margin-bottom: 30px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 15px 15px 15px 50px;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 16px;
+  background-color: var(--input-background);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(70, 106, 159, 0.2);
+}
+
+.search-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+  width: 24px;
+  height: 24px;
+}
+
+.search-button {
+  display: none;
+}
+
+.weather-card {
+  margin-top: 20px;
+}
+
+.location-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.city-name {
+  font-size: 24px;
+  font-weight: 600;
+  margin-right: 10px;
+  color: var(--primary-color);
+}
+
+.country {
+  color: var(--primary-color);
+  font-size: 16px;
+  opacity: 0.8;
+}
+
+.dot {
+  margin: 0 10px;
+  font-size: 20px;
+  opacity: 0.6;
+}
+
+.weather-display {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.temperature-section {
+  flex: 1;
+}
+
+.temp-value {
+  font-size: 60px;
+  font-weight: 600;
+  color: var(--primary-color);
+  line-height: 1;
+  margin-bottom: 10px;
+}
+
+.description {
+  font-size: 24px;
+  color: var(--primary-color);
+  margin-bottom: 15px;
+}
+
+.weather-advice {
+  color: var(--primary-color);
+  font-size: 16px;
+  font-weight: 500;
+  opacity: 1;
+  margin-top: 20px;
+  padding: 15px;
+  border-top: 1px solid #eaeaea;
+  display: flex;
+  align-items: center;
+  background-color: rgba(70, 106, 159, 0.05);
+  border-radius: 10px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.advice-icon {
+  margin-right: 10px;
+  color: var(--primary-color);
+  flex-shrink: 0;
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.icon-container {
+  width: 100px;
+  height: 100px;
+  position: relative;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.weather-icon {
+  width: 100%;
+  height: 100%;
+  stroke: var(--primary-color);
+  fill: var(--primary-color);
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.emoji-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 70px;
+  color: var(--primary-color);
+}
+
+.error-message {
+  background-color: #fde2e2;
+  color: #ef4444;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Style pour le bouton du mode sombre */
+.dark-mode-toggle {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border: none;
+  font-size: 20px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode-toggle:hover {
+  transform: scale(1.1);
+} 

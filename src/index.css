@@ -1,0 +1,44 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --primary-color: #466a9f;
+  --secondary-color: #e1f2fe;
+  --text-color: #466a9f;
+  --border-radius: 15px;
+  --background-color: #e1f2fe;
+  --card-background: white;
+  --input-background: #f7f9fc;
+}
+
+/* Mode sombre */
+.dark-mode {
+  --primary-color: #6d92c8;
+  --secondary-color: #1a2639;
+  --text-color: #e1f2fe;
+  --background-color: #121212;
+  --card-background: #1e293b;
+  --input-background: #2a3649;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background-color: var(--background-color);
+  margin: 0;
+  padding: 20px;
+  color: var(--text-color);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s ease;
+}
+
+#root {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+} 
